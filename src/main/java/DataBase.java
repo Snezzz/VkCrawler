@@ -139,6 +139,7 @@ public class DataBase {
             stmt.setString(1,UUID.randomUUID().toString());
             stmt.setString(2, entry.getKey());
             stmt.setInt(3,entry.getValue());
+       //     stmt.setString(4,query);
             if(query.equals("спбгу") || query.equals("spbu"))
                 stmt.setString(4,"спбгу");
             if(query.equals("мгу") || query.equals("mgu") || query.equals("Lomonosov Moscow State University"))

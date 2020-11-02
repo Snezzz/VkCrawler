@@ -53,7 +53,7 @@ public class MultiThread {
 
             NewsParser newsParser = new NewsParser(userId);
             //статистические данные
-            Map<Integer, List<SearchResponse>> answer = newsParser.parseByDays(query, 5);
+            Map<Integer, List<SearchResponse>> answer = newsParser.parseByDays(query, 10);
 
             results.put(query, answer);
 

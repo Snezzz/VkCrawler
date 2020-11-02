@@ -12,6 +12,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -118,9 +119,10 @@ public class NewsParser {
      */
     Map<Integer, List<SearchResponse>> parseByDays(String query, int daysCount) throws ClientException, ApiException, ParseException, SQLException, NoSuchAlgorithmException, IOException {
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         Map<String, Map<Integer, List<SearchResponse>>> dataMap = new TreeMap<String, Map<Integer, List<SearchResponse>>>();
         Map<Integer, List<SearchResponse>> days = new TreeMap<>();
+
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         int start = 10;
         int totalPublicationsCount = 0;
@@ -128,11 +130,15 @@ public class NewsParser {
         List<SearchResponse> searchResponseList;
         DataBase db = new DataBase();
         Map<String, Integer> publicationsCountMap = new TreeMap<>();
-        for (int i = start; i < start + 3; i++) {
+        for (int i = start; i < start + daysCount; i++) {
+            //System.out.println("new day");
             totalPublicationsCount = 0;
-            String startDate = "2020-10-" + i;
-            long startDay = dateFormat.parse(startDate + "T00:00:00.000-0000").getTime();
-            long endDay = dateFormat.parse("2020-10-" + (i + 1) + "T00:00:00.000-0000").getTime();
+
+            String startDate = i+"/10/2020";
+            String endDate = (i+1)+"/10/2020";
+
+            long startDay =  formatter.parse(startDate).getTime()/1000L;
+            long endDay = formatter.parse(endDate).getTime()/1000L;
 
             searchResponseList = parse(query, startDay, endDay);
 
@@ -173,6 +179,7 @@ public class NewsParser {
                 if (result.getItems().size() > 0) {
                     searchResponseList.add(result);
                 }
+                Thread.sleep(1000);
             } catch (Exception e) {
                 // System.out.println(e.getMessage());
                 next_from = null;
@@ -198,7 +205,7 @@ public class NewsParser {
 
 
         NewsfeedSearchQuery newsfeedSearchQuery = this.vkClient.newsfeed().search(this.userActor)
-                .count(200).startTime((int) (startDate / 1000)).endTime((int) (endDate / 1000)).startFrom(next_from).q(query);
+                .count(200).startTime((int) startDate / 1000).endTime((int) (endDate)).startFrom(next_from).q(query);
         String result = newsfeedSearchQuery.executeAsRaw().getContent();
 
 
@@ -223,7 +230,7 @@ public class NewsParser {
      */
     public SearchResponse createQuery(String query, long startDate, long endDate, String next_from) throws ClientException, ApiException, InterruptedException {
         NewsfeedSearchQuery newsfeedSearchQuery = this.vkClient.newsfeed().search(this.userActor)
-                .count(200).startTime((int) (startDate / 1000)).endTime((int) (endDate / 1000)).startFrom(next_from).q(query);
+                .count(200).startTime((int)startDate).endTime((int)endDate).startFrom(next_from).q(query);
         try {
             return newsfeedSearchQuery.execute();
         } catch (Exception e) {
