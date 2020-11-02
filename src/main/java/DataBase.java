@@ -35,7 +35,7 @@ public class DataBase {
     /**
      * Метод по отправлению данных в таблицы 'news' и 'links'
      * @param type - мгу или спбгу
-     * @param responses - список комментариев
+     * @param responses - список новостей
      */
     public void sendData(String type, List<SearchResponse> responses) throws SQLException, NoSuchAlgorithmException {
 

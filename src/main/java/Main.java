@@ -66,8 +66,8 @@ public class Main {
 
         int daysCount = db.getDaysCount();
         sendCountData(daysCount, totalSPBUCommentsCount, totalMGUCommentsCount, userSPBUCount, userMGUCount);
-        sendData("спбгу",spbuData);
-        sendData("мгу",mguData);
+        sendData("spbu",spbuData);
+        sendData("mgu",mguData);
     }
 
     static void sendCountData(int daysCount,
